@@ -20,6 +20,8 @@ InstallDir "$PROGRAMFILES\SJE\SJC"
 ; overwrite the old one automatically)
 InstallDirRegKey HKLM "Software\NSIS_SJC" "Install_Dir"
 
+!define QTDIR	"c:\Qt\4.4.0"
+
 ;--------------------------------
 
 ; Pages
@@ -34,27 +36,27 @@ UninstPage instfiles
 ;--------------------------------
 
 ; The stuff to install
-#Section "Microsoft Visual C Runtime"
-#
-#  SetOutPath "$INSTDIR"
-#
-#  File "vcredist_x86.exe"
-#
-#  nsExec::ExecToStack 'vcredist_x86.exe'
-#  
-#  Delete "$INSTDIR\vcredist_x86.exe"
-#  
-#SectionEnd
+Section "Microsoft Visual C Runtime"
+
+  SetOutPath "$INSTDIR"
+
+  File "vcredist_x86.exe"
+
+  nsExec::ExecToStack 'vcredist_x86.exe'
+  
+  Delete "$INSTDIR\vcredist_x86.exe"
+  
+SectionEnd
 
 Section "Qt 4.3.3 Runtime Libraries (MinGW, Commercial)"
   SetOutPath $INSTDIR  
 
-  File "C:\Qt\4.3.3\bin\QtCore4.dll"
-  File "C:\Qt\4.3.3\bin\QtGui4.dll"
-  File "C:\Qt\4.3.3\bin\QtNetwork4.dll"
-#  File "C:\Qt\4.3.3\bin\QtScript4.dll"
-#  File "C:\Qt\4.3.3\bin\QtSql4.dll"
-  File "C:\Qt\4.3.3\bin\QtXml4.dll"
+  File "${QTDIR}\bin\QtCore4.dll"
+  File "${QTDIR}\bin\QtGui4.dll"
+
+  File "${QTDIR}\bin\QtNetwork4.dll"
+  File "${QTDIR}\bin\QtXml4.dll"
+  File "${QTDIR}\bin\QtScript4.dll"
  
 SectionEnd
 
