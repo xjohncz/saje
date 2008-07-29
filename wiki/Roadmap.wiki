@@ -44,7 +44,7 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
     * translations
     * accessibility? 
     * scripting
-  * OTR support
+  * [http://www.cypherpunks.ca/otr OTR] support
   * automatic updates
   * Extensions beyond just instant messaging
     * play with [http://en.wikipedia.org/wiki/Distributed_hash_table DHT]
