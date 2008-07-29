@@ -8,8 +8,13 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
 
   * Architecture enhancements
     * metacontacts (add a layer between protocols and contact list)
-    * message filters
+    * message filter API
   * Store message history and configuration in a portable way
+  * Documentation
+    * code commenting (doxygen)
+    * dev how-to's and examples
+    * FAQ/troubleshooting/installation/setup
+    * roadmap priorities
   * Better graphics
     * icons
     * overall design
@@ -47,5 +52,3 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
       * distributed db/filesystem
       * application delivery
       * clustering
-    * 
-  
