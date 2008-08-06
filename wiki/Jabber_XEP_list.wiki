@@ -1,0 +1,11 @@
+#summary XMPP extensions supported by the Jabber plugin
+#labels Phase-Design
+
+= Supported XMPP Extensions =
+
+The following is a list of the [http://www.xmpp.org/extensions/ XMPP Extensions](XEPs) supported by the Jabber protocol plugin. These are extensions to the basic protocol as descibed in [http://www.xmpp.org/rfcs/rfc3920.html XMPP CORE] and [http://www.xmpp.org/internet-drafts/draft-saintandre-rfc3921bis-03.html XMPP IM].
+
+|| XEP-0030 || Service Discovery ||
+|| XEP-0083 || Nested Roster Groups ||
+|| XEP-0092 || Software Version ||
+|| XEP-0100 || Gateway Interaction ||
