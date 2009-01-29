@@ -20,7 +20,7 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
     * icons
     * overall design
     * a built in but optional alternate qt style (skin example)
-  * Extent the jabber protocol:
+  * Extend the jabber protocol:
     * support more XEPs, maybe starting with 
       * search functionality
       * metacontacts
