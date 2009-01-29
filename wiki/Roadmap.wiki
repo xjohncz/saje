@@ -34,7 +34,6 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
     * Yahoo
   * Bells and whistles
     * basics like 
-      * frameless window option
       * tabbed messaging windows
       * sounds
       * font/colour management
