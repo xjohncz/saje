@@ -2,6 +2,6 @@
 
 = Requirements =
 
-  * Qt 4.5+ from [http://trolltech.com]
+  * Qt 4.5+ from [http://www.qtsoftware.com]
   * Compiler
   * Saje source
