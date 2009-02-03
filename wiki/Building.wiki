@@ -1,0 +1,7 @@
+#summary Building Saje
+
+= Requirements =
+
+  * Qt 4.5+ from [http://trolltech.com]
+  * Compiler
+  * Saje source
