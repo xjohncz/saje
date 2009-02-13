@@ -7,6 +7,6 @@ The following is a list of the [http://www.xmpp.org/extensions/ XMPP Extensions]
 
 || XEP-0030 || Service Discovery ||
 || XEP-0083 || Nested Roster Groups ||
+|| XEP-0085 || Chat State Notifications ||
 || XEP-0092 || Software Version ||
 || XEP-0100 || Gateway Interaction ||
-|| XEP-0085 || Chat State Notifications ||
