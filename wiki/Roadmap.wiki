@@ -9,7 +9,6 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
 
   * Architecture enhancements
     * metacontacts (add a layer between protocols and contact list)
-    * message filter API
   * Store message history and configuration in a portable way
   * Documentation
     * code commenting (doxygen)
@@ -19,7 +18,6 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
   * Better graphics
     * icons
     * overall design
-    * a built in but optional alternate qt style (skin example)
   * Extend the jabber protocol:
     * support more XEPs, maybe starting with 
       * search functionality
@@ -36,7 +34,6 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
     * basics like 
       * tabbed messaging windows
       * sounds
-      * font/colour management
     * logging
     * notifications - errors etc
     * 'tooltips' on the contact list to show more contact info
