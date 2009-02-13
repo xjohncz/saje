@@ -1,0 +1,109 @@
+<ui version="4.0" >
+ <class>AskSubscribeClass</class>
+ <widget class="QDialog" name="AskSubscribeClass" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>355</width>
+    <height>277</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Subscription Request</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2" >
+   <item>
+    <widget class="QLabel" name="label" >
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>Allow the following users to see your status:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter|Qt::AlignHCenter|Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout" >
+     <item>
+      <widget class="QListWidget" name="lstUsers" >
+       <property name="selectionMode" >
+        <enum>QAbstractItemView::NoSelection</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout" >
+       <item>
+        <widget class="QPushButton" name="btnSelectAll" >
+         <property name="text" >
+          <string>Select All</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnInvertSelection" >
+         <property name="text" >
+          <string>Invert Selection</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>AskSubscribeClass</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>292</x>
+     <y>279</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>395</x>
+     <y>231</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>AskSubscribeClass</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>96</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>103</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
