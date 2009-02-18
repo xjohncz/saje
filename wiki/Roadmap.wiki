@@ -9,7 +9,7 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
 
   * Architecture enhancements
     * metacontacts (add a layer between protocols and contact list)
-  * Store message history and configuration in a portable way
+  * Store configuration in a portable way
   * Documentation
     * code commenting (doxygen)
     * dev how-to's and examples
