@@ -35,7 +35,6 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
       * tabbed messaging windows
       * sounds
     * logging
-    * notifications - errors etc
     * 'tooltips' on the contact list to show more contact info
     * contact pictures
     * translations
