@@ -21,7 +21,6 @@ There's a lot of work to do, and so little time. I'm actively seeking developers
   * Extend the jabber protocol:
     * support more XEPs, maybe starting with 
       * search functionality
-      * metacontacts
       * xhtml
     * libjingle support
   * Add more protocols
