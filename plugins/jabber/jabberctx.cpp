@@ -353,19 +353,21 @@ void JabberCtx::socketStateChanged(QAbstractSocket::SocketState socketState) {
 }
 
 void JabberCtx::blockingReadSocketMore() {
-	sslSocket.waitForReadyRead();
+        sslSocket.waitForReadyRead(10000);
 
 	if(sslSocket.bytesAvailable() > 0) {
 		QByteArray data = sslSocket.read(sslSocket.bytesAvailable());
 		log(QString().append(data), LMT_RECV);
 
 		reader.addData(data);
-	}
+        } else {
+                log("Blocking read timed out", LMT_ERROR);
+        }
 }
 
 void JabberCtx::readMoreIfNecessary() {
 	reader.readNext();
-	if(reader.atEnd() && reader.hasError() && reader.error() == QXmlStreamReader::PrematureEndOfDocumentError) {
+        while(reader.atEnd() && reader.hasError() && reader.error() == QXmlStreamReader::PrematureEndOfDocumentError && sslSocket.isReadable()) {
 		blockingReadSocketMore();
 		reader.readNext();
 	}
@@ -1128,8 +1130,13 @@ void JabberCtx::msgSend(Contact *contact, const QString &msg, int id) {
 }
 
 void JabberCtx::parseMessageBody(const QString &source) {
-	QString body = reader.readElementText();
-	log("Received message from " + source);
+        readMoreIfNecessary();
+        QString body = reader.text().toString();
+
+        while(!reader.atEnd() && !(reader.isEndElement() && reader.name() == "body"))
+            readMoreIfNecessary();
+
+        log("Received message from " + source);
 
 	Resource *r = roster.get_resource(source,  false);
 	if(r) {
