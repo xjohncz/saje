@@ -123,7 +123,9 @@ void PopupWin::setContent(const QString &title, const QString &text) {
 	QString page = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
 	page += "<html xmlns='http://www.w3.org/1999/xhtml'>\n<head><title>Popup</title><style type='text/css'>" + style
 			+ "</style></head>\n"
-			+ "<body class='popup' bgcolor='" + pclass.background.name() + "'>\n" + text + "</body>\n</html>";
+                        + "<body class='popup' style='background-color:" + pclass.background.name() + "; color:" + pclass.text.name() + ";'>\n"
+                          + text
+                        + "</body>\n</html>";
 	ui.wvText->setContent(page.toUtf8(), "application/xhtml+xml", QUrl::fromLocalFile(QApplication::applicationFilePath()));
 
 	adjustSize();
