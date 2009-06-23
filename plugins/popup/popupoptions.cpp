@@ -72,6 +72,7 @@ void PopupOptions::on_btnBgCol_clicked()
 
 	emit changed();
 }
+#include <message_window_i.h>
 
 void PopupOptions::on_btnTitleCol_clicked()
 {
