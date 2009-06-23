@@ -5,8 +5,6 @@ FileTransferOptions::FileTransferOptions(QWidget *parent)
 {
 	ui.setupUi(this);
 
-	reset();
-
 }
 
 FileTransferOptions::~FileTransferOptions()

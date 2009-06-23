@@ -4,9 +4,6 @@ MenusOptions::MenusOptions(QWidget *parent)
 	: OptionsPageI(parent)
 {
 	ui.setupUi(this);
-
-	reset();
-
 }
 
 MenusOptions::~MenusOptions()

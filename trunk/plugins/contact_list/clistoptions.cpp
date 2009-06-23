@@ -5,7 +5,9 @@ CListOptions::CListOptions(const Settings &settings, QWidget *parent)
 	: OptionsPageI(parent), current_settings(settings)
 {
 	ui.setupUi(this);
-	reset();
+
+        connect(ui.chkHideOffline, SIGNAL(clicked()), this, SIGNAL(changed()));
+        connect(ui.chkHideEmptyGroups, SIGNAL(clicked()), this, SIGNAL(changed()));
 }
 
 CListOptions::~CListOptions() {
@@ -25,10 +27,3 @@ void CListOptions::reset() {
 	ui.chkHideEmptyGroups->setChecked(current_settings.hide_empty_groups);
 }
 
-void CListOptions::on_chkHideOffline_stateChanged(int) {
-	emit changed(true);
-}
-
-void CListOptions::on_chkHideEmptyGroups_stateChanged(int) {
-	emit changed(true);
-}

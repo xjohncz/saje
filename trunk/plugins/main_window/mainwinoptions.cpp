@@ -12,7 +12,6 @@ MainWinOptions::MainWinOptions(const Settings &settings, QWidget *parent)
 	connect(ui.chkToolWin, SIGNAL(clicked()), this, SIGNAL(changed()));
 	connect(ui.sldTrans, SIGNAL(valueChanged(int)), this, SIGNAL(changed()));
 	connect(ui.chkOnTop, SIGNAL(clicked()), this, SIGNAL(changed()));
-	reset();
 }
 
 MainWinOptions::~MainWinOptions()
