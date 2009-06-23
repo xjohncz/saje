@@ -28,7 +28,11 @@ bool AutoAway::load(CoreI *core) {
 	core_i = core;
 	if((accounts_i = (AccountsI *)core_i->get_interface(INAME_ACCOUNTS)) == 0) return false;
 	if((events_i = (EventsI *)core_i->get_interface(INAME_EVENTS)) == 0) return false;
-	return true;
+
+        events_i->add_event_listener(this, UUID_MSG, EVENT_TYPE_MASK_OUTGOING);
+        events_i->add_event_listener(this, UUID_CONTACT_DBL_CLICKED);
+        events_i->add_event_listener(this, UUID_CHAT_STATE, EVENT_TYPE_MASK_OUTGOING);
+        return true;
 }
 
 bool AutoAway::modules_loaded() {
@@ -64,7 +68,12 @@ bool AutoAway::modules_loaded() {
 bool AutoAway::pre_shutdown() {
 	timer.stop();
 	returnFromIdle();
-	return true;
+
+        events_i->remove_event_listener(this, UUID_MSG);
+        events_i->remove_event_listener(this, UUID_CONTACT_DBL_CLICKED);
+        events_i->remove_event_listener(this, UUID_CHAT_STATE);
+
+        return true;
 }
 
 bool AutoAway::unload() {
@@ -86,6 +95,10 @@ void AutoAway::options_applied() {
 	settings.setValue("AutoAway/Restore", s.restore);
 
 	current_settings = s;
+}
+
+bool AutoAway::event_fired(EventsI::Event &e) {
+    idle_time = QDateTime::currentDateTime();
 }
 
 void AutoAway::checkIdle() {
