@@ -107,11 +107,9 @@ void OptionsWin::treeSelectionChanged() {
 
 void OptionsWin::apply() {
 	if(pages_changed.size()) {
-		QMapIterator<QTreeWidgetItem *, OptionsPageI *> i(pages);
-		while(i.hasNext()) {
-			i.next();
-			i.value()->apply();
-		}
+                QListIterator<OptionsPageI *> i(pages_changed);
+                while(i.hasNext())
+                        i.next()->apply();
 		pages_changed.clear();
 	}
 	ui.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
@@ -122,10 +120,10 @@ void OptionsWin::cancel() {
 }
 
 void OptionsWin::changed(bool valid) {
-	pages_changed.append(ui.stack->currentWidget());
-	int i = pages_invalid.indexOf(ui.stack->currentWidget());
+        pages_changed.append((OptionsPageI *)ui.stack->currentWidget());
+        int i = pages_invalid.indexOf((OptionsPageI *)ui.stack->currentWidget());
 	if(valid && i >= 0) pages_invalid.removeAt(i);
-	if(!valid && i == -1) pages_invalid.append(ui.stack->currentWidget());
+        if(!valid && i == -1) pages_invalid.append((OptionsPageI *)ui.stack->currentWidget());
 	set_button_states();
 }
 

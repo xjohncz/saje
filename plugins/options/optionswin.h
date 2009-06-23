@@ -30,7 +30,7 @@ protected:
 	QMap<QTreeWidgetItem *, OptionsPageI *> pages;
 	QMap<OptionsPageI *, QString> categories;
 	QStackedLayout *stack;
-	QList<QWidget *> pages_invalid, pages_changed;
+        QList<OptionsPageI *> pages_invalid, pages_changed;
 
 	void showEvent(QShowEvent *e);
 	void set_button_states();
