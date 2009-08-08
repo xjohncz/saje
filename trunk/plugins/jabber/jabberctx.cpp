@@ -1165,7 +1165,10 @@ void JabberCtx::parseMessage() {
 				while(!reader.atEnd() && !(reader.isEndElement() && reader.name() == "message")) {
 					readMoreIfNecessary();
 					if(!reader.atEnd() && reader.isStartElement() && reader.name() == "body") {
-						parseMessageBody(source);
+						if(reader.namespaceUri() == "http://www.w3.org/1999/xhtml") {
+							 // TODO: xhtml
+						} else
+							parseMessageBody(source);
 					}
 					if(!reader.atEnd() && reader.isStartElement() && reader.name() == "active") {
 						state = CS_ACTIVE;
