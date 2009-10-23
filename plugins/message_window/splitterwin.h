@@ -48,7 +48,7 @@ protected:
 	void closeEvent(QCloseEvent *e);
 
 	void setUserChatState(ChatStateType state);
-	void linkUrls(QString &s);
+	//void linkUrls(QString &s);
 
 protected slots:
 	void scrollLogToBottom();

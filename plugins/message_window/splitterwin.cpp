@@ -203,6 +203,7 @@ QString SplitterWin::timestamp(QDateTime &dt) {
 	return ret;
 }
 
+/*
 void SplitterWin::linkUrls(QString &str) {
 	//dispMsg.replace(QRegExp(LP), "<a href='http://\\2'>\\1</a>");
 
@@ -237,9 +238,14 @@ void SplitterWin::linkUrls(QString &str) {
 		pos += len;
 	}
 }
-
+*/
 void SplitterWin::addToLog(Message &m) {
-	content << m;
+	int i = content.size();
+	if(i > 0) {
+		while(i - 1 > 0 && content[i - 1].timestamp > m.timestamp) i--;
+		content.insert(i, m);
+	} else
+		content << m;
 	while(content.size() > MAX_MESSAGES)
 		content.removeFirst();
 }

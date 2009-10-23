@@ -1,6 +1,10 @@
 #ifndef _I_ACCOUNTS_H
 #define _I_ACCOUNTS_H
 
+#ifndef ATTRIBUTE_UNUSED
+#define ATTRIBUTE_UNUSED __attribute__ ((__unused__))
+#endif /* ATTRIBUTE_UNUSED */
+
 #include "options_i.h"
 #include "add_contact_i.h"
 #include "events_i.h"
@@ -78,11 +82,11 @@ public:
 	virtual const QString defaultHost() const = 0;
 
 	// called when reading/writing account data to XML - override to read/store proto-specific data
-	virtual void parse_extra_data(QDomElement &node, Account *acc) {}
-	virtual void set_extra_data(QDomElement &node, Account *acc) {}
+	virtual void parse_extra_data(QDomElement &node ATTRIBUTE_UNUSED, Account *acc ATTRIBUTE_UNUSED) {}
+	virtual void set_extra_data(QDomElement &node ATTRIBUTE_UNUSED, Account *acc ATTRIBUTE_UNUSED) {}
 
 	// return 0 if you don't have extra options for accounts
-	virtual AccountExtra *create_account_extra(Account *acc) {return 0;}
+	virtual AccountExtra *create_account_extra(Account *acc ATTRIBUTE_UNUSED) {return 0;}
 	// return 0 if you don't have 'add contact' functionality
 	virtual ProtoSearchWindowI *create_search_window() {return 0;}
 
