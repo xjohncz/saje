@@ -1130,13 +1130,14 @@ void JabberCtx::msgSend(Contact *contact, const QString &msg, int id) {
 }
 
 void JabberCtx::parseMessageBody(const QString &source) {
-        readMoreIfNecessary();
-        QString body = reader.text().toString();
+	QString body;
 
-        while(!reader.atEnd() && !(reader.isEndElement() && reader.name() == "body"))
-            readMoreIfNecessary();
+	while(!reader.atEnd() && !(reader.isEndElement() && reader.name() == "body")) {
+		body = reader.text().toString();
+		readMoreIfNecessary();
+	}
 
-        log("Received message from " + source);
+	log("Received message from " + source);
 
 	Resource *r = roster.get_resource(source,  false);
 	if(r) {
@@ -1164,32 +1165,32 @@ void JabberCtx::parseMessage() {
 				ChatStateType state = CS_ACTIVE;
 				while(!reader.atEnd() && !(reader.isEndElement() && reader.name() == "message")) {
 					readMoreIfNecessary();
-					if(!reader.atEnd() && reader.isStartElement() && reader.name() == "body") {
-						if(reader.namespaceUri() == "http://www.w3.org/1999/xhtml") {
-							 // TODO: xhtml
-						} else
-							parseMessageBody(source);
-					}
-					if(!reader.atEnd() && reader.isStartElement() && reader.name() == "active") {
-						state = CS_ACTIVE;
-					} else if(!reader.atEnd() && reader.isStartElement() && reader.name() == "inactive") {
-						state = CS_INACTIVE;
-					} else if(!reader.atEnd() && reader.isStartElement() && reader.name() == "composing") {
-						state = CS_COMPOSING;
-					} else if(!reader.atEnd() && reader.isStartElement() && reader.name() == "paused") {
-						state = CS_PAUSED;
-					} else if(!reader.atEnd() && reader.isStartElement() && reader.name() == "gone") {
-						state = CS_GONE;
+					if(!reader.atEnd() && reader.isStartElement()) {
+						if(reader.name() == "body") {
+							if(reader.namespaceUri() == "http://www.w3.org/1999/xhtml") {
+								 // TODO: xhtml
+							} else
+								parseMessageBody(source);
+						}
+						if(reader.name() == "active")
+							state = CS_ACTIVE;
+						else if(reader.name() == "inactive")
+							state = CS_INACTIVE;
+						else if(reader.name() == "composing")
+							state = CS_COMPOSING;
+						else if(reader.name() == "paused")
+							state = CS_PAUSED;
+						else if(reader.name() == "gone")
+							state = CS_GONE;
 					}
 				}
 				ChatState cs(i->getContact(), state, true, this);
 				events_i->fire_event(cs);
 			}
 		}
-	} else {
-		while(!reader.atEnd() && !(reader.isEndElement() && reader.name() == "message"))
-			readMoreIfNecessary();
 	}
+	while(!reader.atEnd() && !(reader.isEndElement() && reader.name() == "message"))
+		readMoreIfNecessary();
 }
 
 void JabberCtx::sendIqQueryDiscoInfo(const QString &entity_jid, const QString &node) {

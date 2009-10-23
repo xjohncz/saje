@@ -139,6 +139,13 @@ SplitterWin *MessageWindow::get_window(Contact *contact) {
 		connect(core_i, SIGNAL(styleSheetSet(const QString &)), win, SLOT(setLogStyleSheet(const QString &)));
 
 		win->setLogStyleSheet(qApp->styleSheet());
+		win->setSendChatState(current_settings.send_chat_state);
+
+		connect(win, SIGNAL(closed(Contact *)), this, SLOT(destroy_window(Contact *)));
+
+		MessageWinEvent mwe(contact, this);
+		events_i->fire_event(mwe);
+
 		if(history_i && current_settings.load_history != MessageWindowOptions::Settings::LH_NONE) {
 			if(current_settings.load_history == MessageWindowOptions::Settings::LH_TIME) {
 				history_i->refire_latest_events(contact, QDateTime::currentDateTime().addDays(current_settings.history_days * -1));
@@ -147,12 +154,6 @@ SplitterWin *MessageWindow::get_window(Contact *contact) {
 			}
 		}
 
-		win->setSendChatState(current_settings.send_chat_state);
-
-		connect(win, SIGNAL(closed(Contact *)), this, SLOT(destroy_window(Contact *)));
-
-		MessageWinEvent mwe(contact, this);
-		events_i->fire_event(mwe);
 	}
 
 	return windows[contact];
