@@ -99,6 +99,7 @@ void AutoAway::options_applied() {
 
 bool AutoAway::event_fired(EventsI::Event &e) {
     idle_time = QDateTime::currentDateTime();
+    return true;
 }
 
 void AutoAway::checkIdle() {
