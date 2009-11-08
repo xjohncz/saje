@@ -2,7 +2,7 @@
 #include <QtPlugin>
 #include <QTextDocument> // for Qt::escape
 
-#define RX_DOMAIN		"(?:\\w+\\.)+(?:co(?:m)?|org|net|gov|biz|info|travel|ous|[a-z]{2})"
+#define RX_DOMAIN		"(?:(?:\\w|-)+\\.)+(?:co(?:m)?|org|net|gov|biz|info|travel|ous|[a-z]{2})"
 #define RX_PROTOS		"(?:http(?:s)?://|ftp://|mailto:)?"
 #define RX_PORT			"(?:\\:\\d{1,5})?"
 #define RX_EMAIL		"\\w+@" RX_DOMAIN
