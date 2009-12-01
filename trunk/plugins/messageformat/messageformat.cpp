@@ -1,13 +1,26 @@
 #include "messageformat.h"
 #include <QtPlugin>
 #include <QTextDocument> // for Qt::escape
+#include <QDebug>
 
 #define RX_DOMAIN		"(?:(?:\\w|-)+\\.)+(?:co(?:m)?|org|net|gov|biz|info|travel|ous|[a-z]{2})"
 #define RX_PROTOS		"(?:http(?:s)?://|ftp://|mailto:)?"
 #define RX_PORT			"(?:\\:\\d{1,5})?"
 #define RX_EMAIL		"\\w+@" RX_DOMAIN
-#define RX_OTHER		RX_DOMAIN RX_PORT "(?:[/\\?]\\S+)?"
-#define LP				"\\b(" RX_PROTOS ")(" RX_EMAIL "|" RX_OTHER ")\\b"
+#define RX_OTHER		RX_DOMAIN RX_PORT "(?:[/\\?]\\S+(?:\\;)?)?"
+#define BREAK                   "(?:^|\\n|\\r|\\t|\\s)?"
+#define LP				BREAK "(" RX_PROTOS ")(" RX_EMAIL "|" RX_OTHER ")+" BREAK
+
+QString my_escape(const QString &in) {
+    QString out = in;
+    return out.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('\'', "&apos;").replace('\"', "&quot;");
+}
+
+QString my_unescape(const QString &in) {
+    QString out = in;
+    //return out.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('\'', "&apos;").replace('\"', "&quot;");
+    return out.replace("&quot;", "\"").replace("&apos;", "'").replace("&gt;", ">").replace("&lt;", "<").replace("&amp;", "&");
+}
 
 PluginInfo info = {
 	0x080,
@@ -59,9 +72,10 @@ const PluginInfo &MessageFormat::get_plugin_info() {
 bool MessageFormat::event_fired(EventsI::Event &e) {
 	if(e.uuid == UUID_MSG) {
 		Message &m = static_cast<Message &>(e);
-		m.text = Qt::escape(m.text);
+                m.text = my_escape(m.text);
 		m.text.replace("\n", "<br />\n");
 		linkUrls(m.text);
+                qDebug() << "Formatted text: " << m.text;
 	}
 	return true;
 }
@@ -92,7 +106,8 @@ void MessageFormat::linkUrls(QString &str) {
 			valid = false;
 		}
 		if(valid) {
-			after = "<a href='" + scheme + rx.cap(2) + "'>" + rx.cap(0) + "</a>";
+                        // use Qt's unescape, so that we leave quotes encoded
+                        after = "<a href=\"" + scheme + my_unescape(rx.cap(2)).replace('\"', "\\\"") + "\">" + rx.cap(0) + "</a>";
 			str.replace(pos, len, after);
 			len = after.length();
 		}
