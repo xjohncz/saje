@@ -97,7 +97,23 @@ bool Smileys::event_fired(EventsI::Event &e) {
 		foreach(QString sub, current_settings.subs.keys()) {
 			QString newtext =  "<img class='smiley' src='" + QUrl::fromLocalFile(current_settings.subs[sub]).toString() + "' alt='" + sub + "' />";
 			//qDebug() << "smileys module replacing '" + sub + "' with '" + newtext + "'";
-			m.text.replace(sub, newtext);
+
+                        // ensure we don't mess with encoded chars
+                        if(sub.at(0) == ';') {
+                            int index = 0;
+                            while((index = m.text.indexOf(sub, index)) != -1) {
+                                if((index >= 5 && m.text.at(index - 5) == '&')
+                                      || (index >= 3 && m.text.at(index - 3) == '&') )
+                                {
+                                    index += sub.length();
+                                } else {
+                                    m.text.replace(index, sub.length(), newtext);
+                                    index += newtext.length();
+                                }
+                            }
+                        } else {
+                            m.text.replace(sub, newtext);
+                        }
 		}
 	}
 	return true;
