@@ -8,10 +8,11 @@ Core *core = 0;
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
-	QApplication::setOrganizationDomain("scottellis.com.au");
-	QApplication::setOrganizationName("Saje");
-	QApplication::setQuitOnLastWindowClosed(false);
 	QApplication::setApplicationName("Saje");
+	QApplication::setOrganizationName("Saje");
+	QApplication::setOrganizationDomain("scottellis.com.au");
+
+	QApplication::setQuitOnLastWindowClosed(false);
 
 	// make sure the settings file, and it's folder, exist
 	QSettings::setDefaultFormat(QSettings::IniFormat);

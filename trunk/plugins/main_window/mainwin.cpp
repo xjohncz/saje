@@ -61,9 +61,6 @@ MainWin::MainWin(CoreI *core, QWidget *parent)
 	ui.toolBar->addWidget(mainMenuButton);
 	ui.toolBar->addAction(exitAct);
 
-	QSettings settings;
-	restoreGeometry(settings.value("MainWin/geometry").toByteArray());
-
 	systray = new QSystemTrayIcon(this);
 	if(icons_i) systray->setIcon(icons_i->get_icon("generic"));
 	connect(systray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(systrayActivated(QSystemTrayIcon::ActivationReason)));
@@ -81,6 +78,8 @@ MainWin::~MainWin()
 }
 
 void MainWin::modules_loaded() {
+	QSettings settings;
+	restoreGeometry(settings.value("MainWin/geometry").toByteArray());
 }
 
 void MainWin::ensureOnScreen(int screenChanged) {
@@ -109,9 +108,10 @@ void MainWin::ensureOnScreen(int screenChanged) {
 
 void MainWin::updateFlags() {
 	bool hidden = isHidden();
-	setWindowFlags((toolWindow ? Qt::Tool : Qt::Window) 
-		| (hideFrame ? Qt::FramelessWindowHint : Qt::Widget)
-		| (onTop ? Qt::WindowStaysOnTopHint : Qt::Widget));
+	setWindowFlags(Qt::Window | Qt::WindowSystemMenuHint
+				   | (toolWindow ? Qt::Tool : Qt::Widget)
+				   | (hideFrame ? Qt::FramelessWindowHint : Qt::Widget)
+				   | (onTop ? Qt::WindowStaysOnTopHint : Qt::Widget));
 
 	if(!hidden) show();	
 }
@@ -150,8 +150,8 @@ void MainWin::systrayActivated(QSystemTrayIcon::ActivationReason reason) {
 }
 
 void MainWin::toggleHidden() {
-	if(isHidden()) {
-		show();
+	if(isHidden() || isMinimized()) {
+		showNormal();
 		activateWindow();
 		raise();
 	} else 
@@ -191,7 +191,6 @@ bool MainWin::eventFilter(QObject *target, QEvent *e) {
 		QWidget *w = (QWidget *)target;
 		settings.setValue(w->windowTitle() + "/geometry", w->saveGeometry());
 	}
-
 	return QMainWindow::eventFilter(target, e);
 }
 
