@@ -47,8 +47,8 @@ bool main_window::modules_loaded() {
 		options_i->add_page("Appearance/Main Window", opt);
 	}
 
-	win->modules_loaded();
 	win->set_options(s);
+	win->modules_loaded();
 	win->restoreHiddenState();
 
 	return true;
