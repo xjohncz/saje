@@ -9,7 +9,7 @@
 #define RX_EMAIL		"\\w+@" RX_DOMAIN
 #define RX_OTHER		RX_DOMAIN RX_PORT "(?:[/\\?]\\S+(?:\\;)?)?"
 #define BREAK                   "(?:^|\\n|\\r|\\t|\\s)?"
-#define LP				BREAK "(" RX_PROTOS ")(" RX_EMAIL "|" RX_OTHER ")+" BREAK
+#define LP				BREAK "(" RX_PROTOS ")(" RX_EMAIL "|" RX_OTHER ")"
 
 QString my_escape(const QString &in) {
     QString out = in;
@@ -46,7 +46,7 @@ bool MessageFormat::load(CoreI *core) {
 	core_i = core;
 	if((events_i = (EventsI *)core_i->get_interface(INAME_EVENTS)) == 0) return false;
 
-		events_i->add_event_filter(this, 0x200, UUID_MSG, EVENT_TYPE_MASK_INCOMING | EVENT_TYPE_MASK_OUTGOING);
+	events_i->add_event_filter(this, 0x200, UUID_MSG, EVENT_TYPE_MASK_INCOMING | EVENT_TYPE_MASK_OUTGOING);
 	return true;
 }
 
@@ -72,10 +72,10 @@ const PluginInfo &MessageFormat::get_plugin_info() {
 bool MessageFormat::event_fired(EventsI::Event &e) {
 	if(e.uuid == UUID_MSG) {
 		Message &m = static_cast<Message &>(e);
-                m.text = my_escape(m.text);
+		m.text = my_escape(m.text);
 		m.text.replace("\n", "<br />\n");
 		linkUrls(m.text);
-                qDebug() << "Formatted text: " << m.text;
+		//qDebug() << "Formatted text: " << m.text;
 	}
 	return true;
 }
@@ -84,11 +84,12 @@ void MessageFormat::linkUrls(QString &str) {
 	//dispMsg.replace(QRegExp(LP), "<a href='http://\\2'>\\1</a>");
 
 	QRegExp rx(LP), rx_email("^" RX_EMAIL);
-	int pos = 0, len;
+	int pos = 0, len, len2;
 	QString scheme, after;
 	bool valid;
 	while ((pos = rx.indexIn(str, pos)) != -1) {
 		len = rx.matchedLength();
+		len2 = rx.cap(1).length() + rx.cap(2).length();
 
 		//rx.cap(0) is whole match, rx.cap(1) is url scheme, rx.cap(2) is the rest
 
@@ -99,16 +100,14 @@ void MessageFormat::linkUrls(QString &str) {
 				scheme = "mailto:";
 			else
 				scheme = "http://";
-		} else
-		if((scheme == "mailto:" && rx_email.indexIn(rx.cap(2)) == -1)
-			|| (scheme != "mailto:" && rx_email.indexIn(rx.cap(2)) != -1))
-		{
-			valid = false;
+		} else {
+			if((scheme == "mailto:" && rx_email.indexIn(rx.cap(2)) == -1) || (scheme != "mailto:" && rx_email.indexIn(rx.cap(2)) != -1))
+				valid = false;
 		}
 		if(valid) {
-                        // use Qt's unescape, so that we leave quotes encoded
-                        after = "<a href=\"" + scheme + my_unescape(rx.cap(2)).replace('\"', "\\\"") + "\">" + rx.cap(0) + "</a>";
-			str.replace(pos, len, after);
+			// encode quotes - leave entities encoded
+			after = "<a href=\"" + scheme + rx.cap(2).replace('\"', "\\\"") + "\">" + rx.cap(1) + rx.cap(2) + "</a>";
+			str.replace(pos + len - len2, len2, after);
 			len = after.length();
 		}
 
