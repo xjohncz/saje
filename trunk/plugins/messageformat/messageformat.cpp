@@ -7,7 +7,7 @@
 #define RX_PROTOS		"(?:http(?:s)?://|ftp://|mailto:)?"
 #define RX_PORT			"(?:\\:\\d{1,5})?"
 #define RX_EMAIL		"\\w+@" RX_DOMAIN
-#define RX_OTHER		RX_DOMAIN RX_PORT "(?:[/\\?]\\S+(?:\\;)?)?"
+#define RX_OTHER		RX_DOMAIN RX_PORT "(?:[/?](?:[a-zA-Z0-9~\\-%;=]|&(?:!apos|quot|gt|lt))+)*"
 #define BREAK                   "(?:^|\\n|\\r|\\t|\\s)?"
 #define LP				BREAK "(" RX_PROTOS ")(" RX_EMAIL "|" RX_OTHER ")"
 
@@ -75,7 +75,7 @@ bool MessageFormat::event_fired(EventsI::Event &e) {
 		m.text = my_escape(m.text);
 		m.text.replace("\n", "<br />\n");
 		linkUrls(m.text);
-		//qDebug() << "Formatted text: " << m.text;
+		qDebug() << "Formatted text: " << m.text;
 	}
 	return true;
 }
