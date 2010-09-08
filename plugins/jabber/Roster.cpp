@@ -28,7 +28,7 @@ void RosterItem::setName(const QString &n) {
 
 void RosterItem::setParent(RosterTreeNonLeafNode *p) {
 	RosterTreeNonLeafNode::setParent(p);
-	if(p)
+	if(p && getGroup()->getClistName().size())
 		contact->set_property("group", getGroup()->getClistName());
 	else
 		contact->remove_property("group");

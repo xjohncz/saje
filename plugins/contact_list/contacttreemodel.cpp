@@ -1,6 +1,7 @@
 #include "contacttreemodel.h"
 #include <QIcon>
 #include <QDebug>
+#include <QSettings>
 
 TreeItem::TreeItem(TreeItem *parent) {
 	parentItem = parent;
@@ -279,6 +280,11 @@ void ContactTreeModel::addContact(Contact *contact) {
 
 	QStringList group;
 	if(contact->has_property("group")) group = contact->get_property("group").toStringList();
+	else {
+		QSettings settings;
+		if(settings.contains(contact->hash_id + "_clist_group"))
+			group = settings.value(contact->hash_id + "_clist_group").toStringList();
+	}
 
 	TreeItem *group_item = find_group(group, true);
 	//emit layoutAboutToBeChanged();
@@ -376,14 +382,19 @@ QMimeData* ContactTreeModel::mimeData(const QModelIndexList &indexes) const {
 bool ContactTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
 	ContactMimeData *d = qobject_cast<ContactMimeData *>(const_cast<QMimeData *>(data));
 	if(d) {
+		QSettings settings;
+
 		QStringList group;
 		QModelIndex i = (row == -1 ? parent : index(row, 0, parent));
 		if(getType(i) == TIT_GROUP) group = getGroup(i);
 		else group = getContact(i)->get_property("group").toStringList();
-		if(group.size())
+		if(group.size()) {
 			d->c->set_property("group", group);
-		else 
+			settings.setValue(d->c->hash_id + "_clist_group", group);
+		} else {
 			d->c->remove_property("group");
+			settings.remove(d->c->hash_id + "_clist_group");
+		}
 		removeContact(d->c);
 		addContact(d->c);
 

@@ -135,9 +135,10 @@ bool History::event_fired(EventsI::Event &e) {
 	return true;
 }
 
-QList<Message> History::read_history(QSqlQuery &query, bool mark_read) {
+QList<Message> History::read_history(QSqlQuery &query, bool mark_read, const QString &queryText) {
 	if(!query.exec()) {
 		qWarning() << "History read failed:" << query.lastError().text();
+		qWarning() << "Query was: " << queryText;
 	}
 
 	QList<Message> ret;
@@ -161,32 +162,56 @@ QList<Message> History::read_history(QSqlQuery &query, bool mark_read) {
 }
 
 void History::refire_latest_events(Contact *contact, QDateTime earliest, bool mark_read) {
+	// hangs for long history - earliest unread is a BAD query
+	//QDateTime earliestUnread = earliest_unread(contact);
+	//if(earliestUnread < earliest)
+	//	earliest = earliestUnread;
+	qDebug() << "refire_latest_events (time)";
 
 	QSqlQuery readQuery(db);
-	readQuery.prepare("SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE contact_hash_id=:hash AND timestamp>=:timestamp ORDER BY timestamp ASC;");
+	QString queryText = "SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE contact_hash_id=:hash AND timestamp>=:timestamp ORDER BY timestamp ASC;";
+	readQuery.prepare(queryText);
 
 	readQuery.bindValue(":hash", contact->hash_id);
 	readQuery.bindValue(":timestamp", timestamp_encode(earliest));
 
-	QList<Message> event_list = read_history(readQuery, mark_read);
+	QList<Message> event_list = read_history(readQuery, mark_read, queryText);
 	foreach(Message m, event_list)
 		events_i->fire_event(m);
 }
 
 void History::refire_latest_events(Contact *contact, int count, bool mark_read) {
+	qDebug() << "refire_latest_events (count)";
 
 	QSqlQuery readQuery(db);
-	readQuery.prepare("SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE contact_hash_id=:hash ORDER BY timestamp DESC LIMIT :count;");
+	QString queryText = "SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE contact_hash_id=:hash ORDER BY timestamp DESC LIMIT :count;";
+	readQuery.prepare(queryText);
 
 	readQuery.bindValue(":hash", contact->hash_id);
 	readQuery.bindValue(":count", count);
 
-	QList<Message> event_list = read_history(readQuery, mark_read);
+	QList<Message> event_list = read_history(readQuery, mark_read, queryText);
 	foreach(Message m, event_list)
 		events_i->fire_event(m);
 }
 
+void History::refire_unread_events(Contact *contact, bool mark_read) {
+	qDebug() << "refire_unread_events";
+
+	QSqlQuery readQuery(db);
+	QString queryText = "SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE msg_read='false' AND contact_hash_id=:hash ORDER BY timestamp ASC;";
+	readQuery.prepare(queryText);
+
+	readQuery.bindValue(":hash", contact->hash_id);
+
+	QList<Message> event_list = read_history(readQuery, mark_read, queryText);
+	foreach(Message m, event_list)
+		events_i->fire_event(m);
+}
+
+
 void History::refire_latest_events(QList<Contact *> contacts, QDateTime earliest, bool mark_read) {
+	qDebug() << "refire_latest_events (contacts, time)";
 	QString contactsQueryPart;
 	foreach(Contact *contact, contacts) {
 		if(contactsQueryPart.size())
@@ -195,8 +220,9 @@ void History::refire_latest_events(QList<Contact *> contacts, QDateTime earliest
 	}
 
 	QSqlQuery readQuery(db);
-	readQuery.prepare("SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE "
-					  + contactsQueryPart + " AND timestamp>=:timestamp ORDER BY timestamp ASC;");
+	QString queryText = "SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE "
+					   + contactsQueryPart + " AND timestamp>=:timestamp ORDER BY timestamp ASC;";
+	readQuery.prepare(queryText);
 
 	readQuery.bindValue(":timestamp", timestamp_encode(earliest));
 
@@ -206,6 +232,8 @@ void History::refire_latest_events(QList<Contact *> contacts, QDateTime earliest
 }
 
 void History::refire_latest_events(QList<Contact *> contacts, int count, bool mark_read) {
+	qDebug() << "refire_latest_events (contacts, count)";
+
 	QString contactsQueryPart;
 	foreach(Contact *contact, contacts) {
 		if(contactsQueryPart.size())
@@ -214,8 +242,10 @@ void History::refire_latest_events(QList<Contact *> contacts, int count, bool ma
 	}
 
 	QSqlQuery readQuery(db);
-	readQuery.prepare("SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE "
-					  + contactsQueryPart + " ORDER BY timestamp DESC LIMIT :count;");
+	QString queryText = "SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE "
+						+ contactsQueryPart + " ORDER BY timestamp DESC LIMIT :count;";
+	qDebug() << "Query text: " << queryText;
+	readQuery.prepare(queryText);
 
 	readQuery.bindValue(":count", count);
 
@@ -273,6 +303,15 @@ void History::wipe_history(Contact *contact) {
 	QString queryText = "DELETE FROM message_history,contact_hash WHERE contact_hash_id='" + contact->hash_id + "';";
 	if(!wq.exec(queryText))
 		qWarning() << "History wipe failed:" << wq.lastError().text();
+}
+
+// BAD query
+QDateTime History::earliest_unread(Contact *contact) {
+	QSqlQuery wq(db);
+	QString queryText = "SELECT min(timestamp) FROM message_history WHERE msg_read='false' AND contact_hash_id='" + contact->hash_id + "';";
+	if(!wq.exec(queryText) || wq.size() == 0)
+		return QDateTime::currentDateTime();
+	return timestamp_decode(wq.value(1).toDouble());
 }
 
 void History::enable_history(Contact *contact, bool enable) {
