@@ -25,6 +25,8 @@ public:
 	void refire_latest_events(Contact *contact, QDateTime earliest, bool mark_read = true);
 	void refire_latest_events(Contact *contact, int count, bool mark_read = true);
 
+	void refire_unread_events(Contact *contact, bool mark_read = true);
+
 	void refire_latest_events(QList<Contact *> contacts, QDateTime earliest, bool mark_read = true);
 	void refire_latest_events(QList<Contact *> contacts, int count, bool mark_read = true);
 
@@ -35,7 +37,7 @@ public:
 	void enable_history(Contact *contact, bool enable);
 
 protected:
-	QList<Message> read_history(QSqlQuery &query, bool mark_read);
+	QList<Message> read_history(QSqlQuery &query, bool mark_read, const QString &queryText = QString());
 	void mark_as_read(Contact *contact, double timestamp);
 
 	CoreI *core_i;
@@ -47,6 +49,8 @@ protected:
 	QSqlQuery *writeQuery, *readQueryTime, *readQueryCount;
 
 	QMap<QString, Contact *> hashMap;
+
+	QDateTime earliest_unread(Contact *contact);
 };
 
 #endif // HISTORY

@@ -21,6 +21,9 @@ public:
 	/// refire a sorted list of the last n message events for the given contact, where n = count
 	virtual void refire_latest_events(Contact *contact, int count, bool mark_read = true) = 0;
 
+	/// refire a sorted list of all unread message events for the given contact, where n = count
+	virtual void refire_unread_events(Contact *contact, bool mark_read = true) = 0;
+
 	/// refire a sorted list of all message events after a certain time for the given list of contacts (Message.contact set to source)
 	virtual void refire_latest_events(QList<Contact *> contacts, QDateTime earliest, bool mark_read = true) = 0;
 	/// refire a sorted list of the last n message events for the given list of contacts, where n = count (Message.contact set to source)
@@ -33,6 +36,9 @@ public:
 
 	/// remove all stored history for the given contact
 	virtual void wipe_history(Contact *contact) = 0;
+
+	/// return the timestamp of the earliest unread message for the given contact
+	virtual QDateTime earliest_unread(Contact *contact) = 0;
 
 	/// enable or disable storage of message history for the given contact
 	virtual void enable_history(Contact *contact, bool enable) = 0;

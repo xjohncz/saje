@@ -176,7 +176,7 @@ void MessageWindow::message_event(Message &m) {
 		if(history_i && !m.read) {
 			history_i->mark_as_read(m.contact, m.timestamp);
 			//win->activateWindow();
-			QApplication::alert(win, 1500);
+			QApplication::alert(win, 2000);
 		}
 	} else {
 		Contact *contact = m.contact;
@@ -193,7 +193,7 @@ void MessageWindow::message_event(Message &m) {
 			} else if(current_settings.show_style == MessageWindowOptions::Settings::SS_MINIMIZED) {
 				win->showMinimized();
 				//win->activateWindow();
-				QApplication::alert(win, 1500);
+				QApplication::alert(win, 2000);
 				MessageWinEvent mwe(contact, this);
 				events_i->fire_event(mwe);
 			}
