@@ -55,6 +55,8 @@ protected:
 	bool closeToTray, hideFrame, toolWindow, roundCorners, onTop;
 	void updateFlags();
 
+	bool isObscured();
+
 protected slots:
 	void systrayActivated(QSystemTrayIcon::ActivationReason reason);
 
