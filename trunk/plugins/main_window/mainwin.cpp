@@ -21,12 +21,12 @@ QRegion roundRectRegion(int x, int y, int w, int h, int radius) {
 	r -= QRegion(x + w - radius, y + h - radius, radius, radius);
 	r -= QRegion(x, y + h - radius, radius, radius);
 	// add rounded ones
-        int daimeter = radius * 2;
+		int daimeter = radius * 2;
 	r += QRegion(x, y, daimeter, daimeter, QRegion::Ellipse);
 	r += QRegion(x + w - daimeter, y, daimeter, daimeter, QRegion::Ellipse);
 	r += QRegion(x + w - daimeter, y + h - daimeter, daimeter, daimeter, QRegion::Ellipse);
 	r += QRegion(x, y + h - daimeter, daimeter, daimeter, QRegion::Ellipse);
-	
+
 	return r;
 }
 
@@ -113,7 +113,7 @@ void MainWin::updateFlags() {
 				   | (hideFrame ? Qt::FramelessWindowHint : Qt::Widget)
 				   | (onTop ? Qt::WindowStaysOnTopHint : Qt::Widget));
 
-	if(!hidden) show();	
+	if(!hidden) show();
 }
 
 void MainWin::set_options(MainWinOptions::Settings settings) {
@@ -149,12 +149,26 @@ void MainWin::systrayActivated(QSystemTrayIcon::ActivationReason reason) {
 	}
 }
 
+bool checkPoint(const QPoint &p, const QWidget *w) {
+  QWidget *atW = qApp->widgetAt(w->mapToGlobal(p));
+  if(!atW) return false;
+  return atW->topLevelWidget() == w;
+}
+
+bool MainWin::isObscured() {
+  return !(checkPoint(QPoint(0, 0), this)
+           && checkPoint(QPoint(width() - 1, 0), this)
+           && checkPoint(QPoint(0, height() - 1), this)
+           && checkPoint(QPoint(width() - 1, height() - 1), this)
+           && checkPoint(QPoint(width()/2, height()/2), this));
+}
+
 void MainWin::toggleHidden() {
-	if(isHidden() || isMinimized()) {
+	if(isHidden() || isMinimized() || isObscured()) {
 		showNormal();
 		activateWindow();
 		raise();
-	} else 
+	} else
 		hide();
 }
 
