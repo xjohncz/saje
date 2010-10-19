@@ -46,7 +46,7 @@ bool History::load(CoreI *core) {
 
 	db = QSqlDatabase::addDatabase("QSQLITE", "History");
 	db.setDatabaseName(core_i->get_config_dir() + "/" + DB_FILE_NAME);
-    if(!db.open()) return false;
+	if(!db.open()) return false;
 
 	QSqlQuery q(db);
 
@@ -166,7 +166,8 @@ void History::refire_latest_events(Contact *contact, QDateTime earliest, bool ma
 	//QDateTime earliestUnread = earliest_unread(contact);
 	//if(earliestUnread < earliest)
 	//	earliest = earliestUnread;
-	qDebug() << "refire_latest_events (time)";
+
+  //qDebug() << "refire_latest_events (time)";
 
 	QSqlQuery readQuery(db);
 	QString queryText = "SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE contact_hash_id=:hash AND timestamp>=:timestamp ORDER BY timestamp ASC;";
@@ -181,7 +182,7 @@ void History::refire_latest_events(Contact *contact, QDateTime earliest, bool ma
 }
 
 void History::refire_latest_events(Contact *contact, int count, bool mark_read) {
-	qDebug() << "refire_latest_events (count)";
+	//qDebug() << "refire_latest_events (count)";
 
 	QSqlQuery readQuery(db);
 	QString queryText = "SELECT contact_hash_id, message, incomming, msg_read, timestamp FROM message_history WHERE contact_hash_id=:hash ORDER BY timestamp DESC LIMIT :count;";
@@ -211,7 +212,7 @@ void History::refire_unread_events(Contact *contact, bool mark_read) {
 
 
 void History::refire_latest_events(QList<Contact *> contacts, QDateTime earliest, bool mark_read) {
-	qDebug() << "refire_latest_events (contacts, time)";
+	//qDebug() << "refire_latest_events (contacts, time)";
 	QString contactsQueryPart;
 	foreach(Contact *contact, contacts) {
 		if(contactsQueryPart.size())
@@ -232,7 +233,7 @@ void History::refire_latest_events(QList<Contact *> contacts, QDateTime earliest
 }
 
 void History::refire_latest_events(QList<Contact *> contacts, int count, bool mark_read) {
-	qDebug() << "refire_latest_events (contacts, count)";
+	//qDebug() << "refire_latest_events (contacts, count)";
 
 	QString contactsQueryPart;
 	foreach(Contact *contact, contacts) {
@@ -262,10 +263,10 @@ void History::mark_as_read(Contact *contact, double timestamp) {
 	QSqlQuery mrq(db);
 	QString queryText = "UPDATE message_history SET msg_read='true' WHERE contact_hash_id='" + contact->hash_id + "'"
 		+ " AND timestamp=:timestamp;";
-	
+
 	mrq.prepare(queryText);
 	mrq.bindValue(":timestamp", timestamp);
-	
+
 	if(!mrq.exec())
 		qWarning() << "History mark as read failed:" << mrq.lastError().text();
 	else
@@ -287,7 +288,7 @@ void History::mark_all_as_read(Contact *contact) {
 	QSqlQuery mrq(db);
 	QString queryText = "UPDATE message_history SET msg_read='true' WHERE contact_hash_id='" + contact->hash_id + "'"
 		+ " AND msg_read='false';";
-	
+
 	if(!mrq.exec(queryText))
 		qWarning() << "History mark all as read failed:" << mrq.lastError().text();
 	else

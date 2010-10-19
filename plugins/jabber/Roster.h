@@ -71,7 +71,7 @@ public:
 		RosterTreeNode *item;
 		while(i.hasNext()) {
 			item = i.next();
-			if(item->getName() == name) 
+			if(item->getName() == name)
 				return item;
 		}
 		return 0;
@@ -102,7 +102,7 @@ public:
 	void setPresenceMessage(const QString &msg) {presenceMessage = msg;}
 	void setPriority(int prio) {priority = prio;}
 	void updateLastActivity() {last_activity = QDateTime::currentDateTime();}
-	
+
 	static PresenceType string2pres(const QString &p) {
 		if(p == "unavailable") return PT_UNAVAILABLE;
 		else if(p == "invisible") return PT_INVISIBLE;
@@ -183,7 +183,8 @@ public:
 	}
 
 	RosterGroup *getGroup() const;
-	Resource *get_active_resource() const;
+	Resource *get_active_resource(bool onlyRecent = false) const;
+	QString get_active_resource_id() const;
 	void setAllResourcePresence(PresenceType pres, const QString &msg);
 
 	Contact *getContact() {return contact;}
