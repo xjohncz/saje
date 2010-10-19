@@ -31,9 +31,10 @@ class JabberCtx : public QObject, public EventsI::EventListener {
 public:
 	JabberCtx(Account *account, CoreI *core, QObject *parent = 0);
 	~JabberCtx();
-	
+
 	void setAccountInfo(Account *acc);
 	void log(const QString &message, LogMessageType type = LMT_NORMAL);
+	void toggleVerbose() { verboseLogging = !verboseLogging; }
 
 	GlobalStatus getCurrentStatus() {return account->status;}
 	GlobalStatus getContactStatus(const QString &contact_id);
@@ -236,6 +237,8 @@ protected:
 	void parseIbbInit(const QString &id, const QString &from);
 	void parseIbbData(const QString &id, const QString &from);
 	void parseIbbClose(const QString &id, const QString &from);
+
+	bool verboseLogging;
 };
 
 #endif // JABBERCTX_H

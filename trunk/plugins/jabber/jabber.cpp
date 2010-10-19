@@ -61,7 +61,7 @@ bool jabber::modules_loaded() {
 
 bool jabber::pre_shutdown() {
 	// disconnects and sets all contacts offline (changes icon, proto must remain registered)
-	proto->deleteContexts(); 
+	proto->deleteContexts();
 	return true;
 }
 
@@ -119,6 +119,11 @@ void JabberProto::modules_loaded() {
 		act = menus_i->add_menu_action("Main Menu/Jabber", tr("Send Direct"));
 		connect(act, SIGNAL(triggered()), send_direct, SLOT(show()));
 		if(main_win_i) main_win_i->manage_window_position(send_direct);
+
+		act = menus_i->add_menu_separator("Main Menu/Jabber");
+
+		act = menus_i->add_menu_action("Main Menu/Jabber", tr("Verbose Logging"));
+		connect(act, SIGNAL(triggered()), this, SLOT(toggleVerbose()));
 	} else {
 		service_discovery->show();
 		gateways->show();
@@ -136,6 +141,12 @@ JabberProto::~JabberProto() {
 	accounts_i->deregister_protocol(this);
 
 	deleteContexts();
+}
+
+void JabberProto::toggleVerbose() {
+  foreach(JabberCtx *c, ctx.values()) {
+    c->toggleVerbose();
+  }
 }
 
 void JabberProto::handleGranted(const QString &contact_id, const QString &account_id) {
@@ -182,9 +193,9 @@ void JabberProto::connect_context(JabberCtx *context) {
 
 GlobalStatus JabberProto::closest_status_to(GlobalStatus gs) const {
 	switch(gs) {
-		case ST_OFFLINE: 
-		case ST_ONLINE: 
-		case ST_SHORTAWAY: 
+		case ST_OFFLINE:
+		case ST_ONLINE:
+		case ST_SHORTAWAY:
 		case ST_LONGAWAY:
 		case ST_DND:
 		case ST_CONNECTING:
@@ -192,8 +203,8 @@ GlobalStatus JabberProto::closest_status_to(GlobalStatus gs) const {
 		case ST_OUTTOLUNCH:
 		case ST_ONTHEPHONE:
 			return ST_SHORTAWAY;
-		case ST_INVISIBLE: 
-		case ST_FREETOCHAT: 
+		case ST_INVISIBLE:
+		case ST_FREETOCHAT:
 			return ST_ONLINE;
 	}
 	return ST_OFFLINE;
@@ -225,7 +236,7 @@ bool JabberProto::event_fired(EventsI::Event &e) {
 }
 
 const QList<GlobalStatus> JabberProto::statuses() const {
-	return QList<GlobalStatus>() 
+	return QList<GlobalStatus>()
 		<< ST_OFFLINE
 		<< ST_DND
 		<< ST_LONGAWAY

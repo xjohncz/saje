@@ -31,11 +31,11 @@ public:
 	// return an empty string to disable
 	const QString nick_label() const {return QString();}
 	// return true to allow the user to specify a port
-        bool allowSetPort() const {return true;}
+		bool allowSetPort() const {return true;}
 	// return true to allow the user to specify a host
-        bool allowSetHost() const {return true;}
+		bool allowSetHost() const {return true;}
 
-        quint16 defaultPort() const {return 5222;}
+		quint16 defaultPort() const {return 5222;}
 	const QString defaultHost() const {return "jabber.org";}
 
 	// called when reading/writing account data to XML
@@ -49,10 +49,10 @@ public:
 	bool remove_account_data(Account *account);
 	bool update_account_data(Account *account);
 
-	const QList<GlobalStatus> statuses() const;
+    const QList<GlobalStatus> statuses() const;
         GlobalStatus closest_status_to(GlobalStatus gs) const;
 
-	bool event_fired(EventsI::Event &e);
+    bool event_fired(EventsI::Event &e);
 
 	void setUseSSL(Account *account, bool on, bool ignoreSSLErrors = false);
 	void setConnectionHost(Account *account, const QString &host);
@@ -73,6 +73,8 @@ protected slots:
 
 	void handleGranted(const QString &contact_id, const QString &account_id);
 	void handleDenied(const QString &contact_id, const QString &account_id);
+
+	void toggleVerbose();
 
 protected:
 	CoreI *core_i;
