@@ -644,14 +644,14 @@ void JabberCtx::parseIq() {
       //sendGrant(from);
     } else if(reader.attributes().value("id") == "gateway_unregister") {
     } else if(reader.attributes().value("id") == "push") {
-    } else if(outgoingTransfers.contains(id) && from.startsWith(outgoingTransfers[id].contact_id)) {
+	} else if(outgoingTransfers.contains(id) && from == outgoingTransfers[id].contact_id) {
       readMoreIfNecessary();
       if(reader.isStartElement() && reader.name() == "si") {
         if(!outgoingTransfers[id].accepted) {
           outgoingTransfers[id].accepted = true;
           if(!fileSendTimer.isActive()) fileSendTimer.start();
 
-          FileTransferUserEvent ftue(contact_info_i->get_contact(account, from), "", 0, id, this);
+		  FileTransferUserEvent ftue(contact_info_i->get_contact(account, Roster::full_jid2jid(from)), "", 0, id, this);
           ftue.type = EventsI::ET_INCOMING;
           ftue.ftType = FileTransferUserEvent::FT_ACCEPT;
           ftue.incoming = false;
@@ -1035,8 +1035,9 @@ bool JabberCtx::setPresence(const QString &full_jid, PresenceType presence, cons
   } else {
     r->setPresence(presence);
     r->setPresenceMessage(msg);
-    r->updateLastActivity();
-    r->setPriority(prio);
+	r->setPriority(prio);
+	//r->updateLastActivity(); // on startup the jabber server doesn't send presence in order of priority - this may make lower priority resources 'active'
+
   }
   // application contact status is based on 'active' resource
   r = item->get_active_resource();
@@ -2104,6 +2105,9 @@ void JabberCtx::parseIbbData(const QString &id, const QString &from) {
   ftp.id = data.id;
   events_i->fire_event(ftp);
 
+  Resource *r = roster.get_resource(from, false);
+  if(r) r->updateLastActivity();
+
   sendEmptyResult(id, from);
 }
 
@@ -2112,6 +2116,9 @@ void JabberCtx::parseIbbClose(const QString &id, const QString &from) {
   data.file->close();
   delete data.file;
   incomingTransfers[Roster::full_jid2jid(from)].remove(id);
+
+  Resource *r = roster.get_resource(from, false);
+  if(r) r->updateLastActivity();
 
   sendEmptyResult(id, from);
 }
