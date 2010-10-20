@@ -107,16 +107,19 @@ bool StatusBar::event_fired(EventsI::Event &e) {
 			tb->setToolTip(proto_name + ": " + account_name);
 
 			QMenu *menu = menus_i->get_menu(proto_name + ": " + account_name);
+
+			menus_i->add_menu_action(proto_name + ": " + account_name, proto_name + ": " + account_name, "Proto/" + proto_name + "/Account/" + account_id);
+			menus_i->add_menu_separator(proto_name + ": " + account_name, menu->actions().at(1));
+
 			//connect(proto, SIGNAL(local_status_change(const QString &, const QString &, GlobalStatus)) , this, SLOT(local_status_change(const QString &, const QString &, GlobalStatus)));
 			QList<GlobalStatus> statuses = ac.account->proto->statuses();
+			QAction *a = 0;
 			foreach(GlobalStatus gs, statuses) {
-				QAction *a = menus_i->add_menu_action(proto_name + ": " + account_name, hr_status_name[gs], "Proto/" + proto_name + "/Account/" + account_id + "/" + status_name[gs]);
+				a = menus_i->add_menu_action(proto_name + ": " + account_name, hr_status_name[gs], "Proto/" + proto_name + "/Account/" + account_id + "/" + status_name[gs], a);
 				a->setData(QVariantList() << proto_name << account_id << gs);
 				connect(a, SIGNAL(triggered()), menuMapper, SLOT(map()));
 				menuMapper->setMapping(a, a);
 			}
-			menus_i->add_menu_action(proto_name + ": " + account_name, proto_name + ": " + account_name, "Proto/" + proto_name + "/Account/" + account_id);
-			menus_i->add_menu_separator(proto_name + ": " + account_name, menu->actions().at(1));
 
 			tb->setMenu(menu);
 			tb->setPopupMode(QToolButton::InstantPopup);
