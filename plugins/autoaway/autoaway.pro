@@ -10,3 +10,6 @@ HEADERS += autoaway.h autoawayoptions.h \
 	../../include/options_i.h
 SOURCES += autoaway.cpp autoawayoptions.cpp
 FORMS += autoawayoptions.ui
+unix | mac {
+  LIBS += -lXss
+}
