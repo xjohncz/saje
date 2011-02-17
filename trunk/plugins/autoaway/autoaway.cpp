@@ -4,6 +4,33 @@
 #include <QCursor>
 #include <QDebug>
 
+#ifdef Q_WS_X11
+
+#include <QX11Info>
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/scrnsaver.h>
+
+XScreenSaverInfo *ss_info = 0;
+
+void initX11() {
+  int event_base, error_base;
+  if(XScreenSaverQueryExtension(QX11Info::display(), &event_base, &error_base)) {
+    ss_info = XScreenSaverAllocInfo();
+  }
+}
+
+int secondsIdleX11()
+{
+	if(!ss_info) return 0;
+	if(!XScreenSaverQueryInfo(QX11Info::display(), QX11Info::appRootWindow(), ss_info))
+		return 0;
+	return ss_info->idle / 1000;
+}
+
+#endif
+
 PluginInfo info = {
 	0x600,
 	"AutoAway",
@@ -29,10 +56,15 @@ bool AutoAway::load(CoreI *core) {
 	if((accounts_i = (AccountsI *)core_i->get_interface(INAME_ACCOUNTS)) == 0) return false;
 	if((events_i = (EventsI *)core_i->get_interface(INAME_EVENTS)) == 0) return false;
 
-        events_i->add_event_listener(this, UUID_MSG, EVENT_TYPE_MASK_OUTGOING);
-        events_i->add_event_listener(this, UUID_CONTACT_DBL_CLICKED);
-        events_i->add_event_listener(this, UUID_CHAT_STATE, EVENT_TYPE_MASK_OUTGOING);
-        return true;
+    events_i->add_event_listener(this, UUID_MSG, EVENT_TYPE_MASK_OUTGOING);
+    events_i->add_event_listener(this, UUID_CONTACT_DBL_CLICKED);
+    events_i->add_event_listener(this, UUID_CHAT_STATE, EVENT_TYPE_MASK_OUTGOING);
+
+#ifdef Q_WS_X11
+    initX11();
+#endif
+
+    return true;
 }
 
 bool AutoAway::modules_loaded() {
@@ -44,7 +76,7 @@ bool AutoAway::modules_loaded() {
 	s.min = settings.value("AutoAway/Minutes", 15).toInt();
 	s.status = (GlobalStatus)settings.value("AutoAway/Status", (int)ST_SHORTAWAY).toInt();
 	s.restore = settings.value("AutoAway/Restore", true).toBool();
-	
+
 	current_settings = s;
 
 	if(options_i) {
@@ -77,11 +109,11 @@ bool AutoAway::pre_shutdown() {
 }
 
 bool AutoAway::unload() {
-	return true;
+    return true;
 }
 
 const PluginInfo &AutoAway::get_plugin_info() {
-	return info;
+    return info;
 }
 
 /////////////////////////////
@@ -103,6 +135,13 @@ bool AutoAway::event_fired(EventsI::Event &e) {
 }
 
 void AutoAway::checkIdle() {
+#ifdef Q_WS_X11
+  int secs = secondsIdleX11();
+  if(idle && secs < current_settings.min * 60)
+    returnFromIdle();
+  else if(!idle && secs >= current_settings.min * 60)
+    goIdle();
+#else
 	QPoint pos = QCursor::pos();
 	if(pos != last_mouse_pos) {
 		last_mouse_pos = pos;
@@ -115,11 +154,12 @@ void AutoAway::checkIdle() {
 				goIdle();
 		}
 	}
+#endif
 }
 
 void AutoAway::goIdle() {
 	idle = true;
-	
+
 	AutoAwayStatus aas(idle, idle_time, this);
 	events_i->fire_event(aas);
 
@@ -145,7 +185,7 @@ void AutoAway::returnFromIdle() {
 	AutoAwayStatus aas(idle, idle_time, this);
 	events_i->fire_event(aas);
 
-	if(current_settings.enable && current_settings.restore) 
+	if(current_settings.enable && current_settings.restore)
 		foreach(Account *acc, saved_status.keys()) {
 			AccountStatusReq asr(acc, saved_status[acc], this);
 			events_i->fire_event(asr);
