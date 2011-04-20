@@ -1,10 +1,6 @@
 ### Saje ###
 
-<<<<<<< HEAD
-A generic application platform, with an architecture loosely based on that of the popular multi-protocol instant messenger [Miranda](http://miranda-im.org). It is implemented in pure [Qt](http://www.qtsoftware.com] (c++) and will therefore run on multiple platforms including Windows, Linux and Mac OS X.
-=======
-A generic application platform, with an architecture loosely based on that of the popular multi-protocol instant messenger [http://miranda-im.org Miranda]. It is implemented in pure [Qt](http://www.qtsoftware.com] (c++) and will therefore run on multiple platforms including Windows, Linux and Mac OS X.
->>>>>>> format README
+A generic application platform, with an architecture loosely based on that of the popular multi-protocol instant messenger [Miranda](http://miranda-im.org). It is implemented in pure [Qt](http://www.qtsoftware.com) (c++) and will therefore run on multiple platforms including Windows, Linux and Mac OS X.
 
 Current functionality includes a minimal **Jabber** client, with SSL and MD5-DIGEST authentication (meaning it can be used with google talk and most jabber hosts), support for multiple accounts and jabber 'transports'.
 
