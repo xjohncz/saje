@@ -105,6 +105,7 @@ public:
 
 	static PresenceType string2pres(const QString &p) {
 		if(p == "unavailable") return PT_UNAVAILABLE;
+		else if(p == "offline") return PT_UNAVAILABLE;
 		else if(p == "invisible") return PT_INVISIBLE;
 		else if(p == "available") return PT_ONLINE;
 		else if(p == "away") return PT_AWAY;

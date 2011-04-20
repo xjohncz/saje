@@ -450,6 +450,7 @@ void JabberCtx::connectToServer(bool con) {
 void JabberCtx::startStream() {
   log("Initializing XML stream...");
   reader.clear();
+  reader.setNamespaceProcessing(false);
   writer.writeStartDocument("1.0");
   writer.writeStartElement("stream:stream");
   writer.writeDefaultNamespace("jabber:client");
@@ -1170,7 +1171,7 @@ void JabberCtx::parseMessage() {
   type = reader.attributes().value("type").toString(),
   body;
   if(type == "chat") {
-    Resource *r = roster.get_resource(source,  false);
+	Resource *r = roster.get_resource(source,  true);
     if(r) {
       RosterItem *i = r->getItem();
       if(i) {
