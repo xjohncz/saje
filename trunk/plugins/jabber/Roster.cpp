@@ -50,7 +50,7 @@ Resource *RosterItem::get_active_resource(bool onlyRecent) const {
   else {
 
     if(onlyRecent) {
-      QDateTime recent = QDateTime::currentDateTime().addDays(-1); // only last 24 hours
+	  QDateTime recent = QDateTime::currentDateTime().addSecs(-60 * 60); // only last hour
       QVectorIterator<RosterTreeNode *> i(children);
       Resource *r = 0, *active = 0;
       while(i.hasNext()) {
